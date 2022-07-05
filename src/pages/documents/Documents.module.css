@@ -1,0 +1,21 @@
+.documents_page {
+  margin: 2rem 4rem;
+}
+
+.document {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.view_btn {
+  background-color: rgb(255, 255, 255);
+  padding: 5px 13px;
+  border-radius: 20px;
+  border: 1px solid rgb(97, 97, 242);
+  color: rgb(97, 97, 242);
+  text-decoration: none;
+}
+.view_btn:hover {
+  background-color: rgb(232, 232, 250);
+  transition: all 0.2s linear;
+}

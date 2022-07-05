@@ -1,0 +1,28 @@
+.header {
+	width: 100%;
+	height: fit-content;
+}
+.header_logo {
+	height: 2rem;
+	width: 12rem;
+	margin: 1rem 2rem;
+}
+.navigation_options {
+	border: 1px solid #b2d7f0;
+	margin: 0 2rem;
+	background: #f5fbff;
+	padding: 1.2rem 1rem;
+	display: flex;
+	align-items: center;
+	gap: 22px;
+}
+.header_link {
+	text-decoration: none;
+	color: rgb(152, 152, 152);
+	font-weight: bold;
+}
+.activ_header_link {
+	color: black;
+	border-bottom: 2px solid black;
+}
+

@@ -1,0 +1,23 @@
+.logs_modal {
+  height: 80vh;
+  overflow: auto;
+}
+.logs_modal .legend {
+  text-transform: capitalize;
+}
+.logs_table {
+  overflow: auto;
+}
+.logs_table table {
+  border-collapse: collapse;
+  /* border-spacing: 30px; */
+}
+.logs_table table th {
+  border: 1px solid rgb(218, 216, 216);
+  padding: 5px 20px;
+  background-color: rgb(238, 235, 235);
+}
+.logs_table table td {
+  border: 1px solid rgb(218, 216, 216);
+  padding: 2px 20px;
+}

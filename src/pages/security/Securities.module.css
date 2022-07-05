@@ -1,0 +1,37 @@
+.secuirties_page {
+  margin: 2rem 4rem;
+}
+.security_table_container {
+  overflow: auto;
+}
+.security_table_container table {
+  border-collapse: collapse;
+}
+.security_table_container table th {
+  border: 1px solid rgb(164, 162, 162);
+  padding: 15px 25px;
+}
+.security_table_container table td {
+  border: 1px solid rgb(164, 162, 162);
+  padding: 15px 25px;
+}
+.enabled {
+  background-color: rgb(140, 228, 140);
+  padding: 5px 15px;
+  border-radius: 20px;
+  color: green;
+}
+.disabled {
+  background-color: rgb(252, 205, 205);
+  padding: 5px 15px;
+  border-radius: 20px;
+  color: red;
+}
+.blocked_ips_container {
+  border: 1px solid gray;
+  width: 20rem;
+}
+.security_type {
+  font-weight: bold;
+  color: gray;
+}
