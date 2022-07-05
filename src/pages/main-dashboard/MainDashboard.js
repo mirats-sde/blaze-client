@@ -44,9 +44,10 @@ function a11yProps(index) {
   };
 }
 
-const GmoResearch = () => {
-  const { surveySortBy } = useParams();
+const MainDashboard = () => {
+  const { surveySortBy, clientID } = useParams();
   const history = useHistory();
+  let clientURL = `/clients/${clientID}/`;
 
   const { clientSurveys, teams, client, statusesCnt } =
     useMainDashboardContext();
@@ -123,6 +124,7 @@ const GmoResearch = () => {
                 ? styles.active_status
                 : styles.inactive_status
             }
+            onClick={() => history.push(clientURL + "live")}
           >
             LIVE ({statusesCnt?.live ? statusesCnt?.live : 0})
           </span>
@@ -132,6 +134,7 @@ const GmoResearch = () => {
                 ? styles.active_status
                 : styles.inactive_status
             }
+            onClick={() => history.push(clientURL + "awarded")}
           >
             AWARDED ({statusesCnt?.awarded ? statusesCnt?.awarded : 0})
           </span>
@@ -141,6 +144,7 @@ const GmoResearch = () => {
                 ? styles.active_status
                 : styles.inactive_status
             }
+            onClick={() => history.push(clientURL + "paused")}
           >
             PAUSED ({statusesCnt?.paused ? statusesCnt?.paused : 0})
           </span>
@@ -151,6 +155,7 @@ const GmoResearch = () => {
                 ? styles.active_status
                 : styles.inactive_status
             }
+            onClick={() => history.push(clientURL + "completed")}
           >
             COMPLETED ({statusesCnt?.completed ? statusesCnt?.completed : 0})
           </span>
@@ -161,6 +166,7 @@ const GmoResearch = () => {
                 ? styles.active_status
                 : styles.inactive_status
             }
+            onClick={() => history.push(clientURL + "billed")}
           >
             BILLED ({statusesCnt?.billed ? statusesCnt?.billed : 0})
           </span>
@@ -170,6 +176,7 @@ const GmoResearch = () => {
                 ? styles.active_status
                 : styles.inactive_status
             }
+            onClick={() => history.push(clientURL + "all")}
           >
             ALL ({statusesCnt?.all})
           </span>
@@ -332,7 +339,7 @@ const GmoResearch = () => {
                     </td>
                     <td>
                       {/* {project.EPC} */}
-                      <span className={styles.tableValue}>0.35</span>
+                      <span className={styles.tableValue}>{survey?.epc}</span>
                       <br />
                       <span> USD</span>
                     </td>
@@ -376,4 +383,4 @@ const TooltipForSurveyName = ({ name }) => {
   );
 };
 
-export default GmoResearch;
+export default MainDashboard;

@@ -16,8 +16,9 @@ export const useMainDashboardContext = () => {
 };
 
 const MainDashboardContextProvider = ({ children }) => {
-  const { clientID } = useParams();
+  const { clientID, surveySortBy } = useParams();
   const [clientSurveys, setClientSurveys] = useState([]);
+  const [clientSurveysCopy, setClientSurveysCopy] = useState([]);
   const [client, setClient] = useState({});
   const [statusesCnt, setStatusCnt] = useState({});
   const [teams, setTeams] = useState({});
@@ -52,7 +53,7 @@ const MainDashboardContextProvider = ({ children }) => {
           const result = await getAllSessions(sid);
           result.forEach((res) => {
             if (res.data()?.client_status === 10) {
-              cpiSum += parseInt(res.data()?.client_cpi);
+              cpiSum += parseFloat(res.data()?.client_cpi);
               surveyTimeSum += parseInt(
                 res.data()?.total_survey_time.split(":")[1]
               );
@@ -67,7 +68,12 @@ const MainDashboardContextProvider = ({ children }) => {
           surveyData["avg_cpi"] = (cpiSum / completes).toFixed(2);
           surveyData["ir"] = ((completes / inClients) * 100).toFixed(2);
           surveyData["loi"] = (surveyTimeSum / completes).toFixed(0);
+          surveyData["epc"] = (
+            (surveyData?.avg_cpi * completes) /
+            result.docs.length
+          ).toFixed(2);
           setClientSurveys((prevData) => [...prevData, surveyData]);
+          setClientSurveysCopy((prevData) => [...prevData, surveyData]);
         }
       });
     });
@@ -76,6 +82,19 @@ const MainDashboardContextProvider = ({ children }) => {
       setClient(res.data());
     });
   }, [clientID]);
+
+  useEffect(() => {
+    let clientSurveysTmp = [];
+    if (surveySortBy !== undefined && surveySortBy !== "all") {
+      clientSurveysCopy?.map((survey) => {
+        if (survey?.status === surveySortBy) {
+          clientSurveysTmp.push(survey);
+        }
+      });
+      setClientSurveys(clientSurveysTmp);
+    }
+    if (surveySortBy === "all") setClientSurveys(clientSurveysCopy);
+  }, [surveySortBy]);
 
   const value = { clientSurveys, teams, client, statusesCnt };
   return (
