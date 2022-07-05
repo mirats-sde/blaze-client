@@ -130,6 +130,10 @@ export const getAllSurveys = async () => {
   return await getDocs(collection(db, "miratsinsights", "blaze", "surveys"));
 };
 
+export const getAllClients = async () => {
+  return await getDocs(collection(db, "miratsinsights", "spark", "customer"));
+};
+
 export const getClient = async (clientID) => {
   return await getDoc(doc(db, "miratsinsights", "spark", "customer", clientID));
 };

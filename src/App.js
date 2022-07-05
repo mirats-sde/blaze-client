@@ -13,11 +13,15 @@ import DocumentsContextProvider from "./pages/documents/DocumentsContext";
 import SecuirtyContextProvider from "./pages/security/SecurityContext";
 import MainDashboard from "./pages/main-dashboard/MainDashboard";
 import MainDashboardContextProvider from "./pages/main-dashboard/MainDashboardContext";
+import Home from "./pages/home/Home";
 
 function App() {
   return (
     <>
       <Switch>
+        <Route path="/" exact>
+          <Home />
+        </Route>
         <Route path="/dashboard/:surveyID">
           <ClientDashboardContextProvider>
             <ClientDashboard />
