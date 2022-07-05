@@ -1,0 +1,59 @@
+.survey_status {
+  margin-left: 10px;
+  font-weight: 200;
+  font-size: 10px;
+  font-weight: "lighter";
+  padding: 4px 7px;
+  font-weight: bold;
+  text-transform: uppercase;
+  /* width: 6rem; */
+}
+
+.ongoing {
+  background-color: rgb(247, 217, 152);
+  color: #827e02;
+}
+.lost {
+  background-color: #ba0000;
+  color: #ffffff;
+}
+.won {
+  background-color: #598543;
+  color: white;
+}
+.lead {
+  background-color: #c1bebe;
+  color: #808080;
+}
+.softlaunch {
+  background-color: #adf4b5;
+  color: #008000;
+}
+
+.fulllaunch {
+  background-color: #5c9d65;
+  color: #8bee8b;
+}
+.tested {
+  color: #a22626;
+  background-color: rgb(249, 181, 181);
+}
+.nottested {
+  background-color: #ff9e81;
+}
+.reconciled {
+  background-color: rgb(147, 216, 244);
+  color: #056294;
+}
+.notreconciled {
+  background-color: rgb(147, 216, 244);
+  color: #056294;
+}
+.paused {
+  background-color: #faa4a4;
+  color: #e62727;
+}
+.billed {
+  background-color: #808080;
+  color: white;
+}

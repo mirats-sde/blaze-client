@@ -286,7 +286,7 @@
 .all_status_container .big_bar_container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 20px;
 }
 .all_status_container .big_bar_container .b_bar {
   border: 1px solid lightgray;
@@ -294,13 +294,23 @@
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   text-align: center;
   background-color: rgba(248, 248, 248, 1);
-  padding: 0 25px;
+  width: auto;
+  min-width: 7rem;
+  height: 4.5rem;
+  padding: 1rem;
 }
-
+.b_bar p {
+  margin: 0;
+}
+.all_status_container .big_bar_container .b_bar .b_title {
+  color: rgb(80, 80, 80);
+  font-size: 15px;
+}
 .all_status_container .big_bar_container .b_bar .b_count {
-  font-size: 27px;
+  font-size: 33px;
   font-weight: 600;
   color: rgba(63, 63, 63, 1);
+  margin-top: 0.8rem;
 }
 .all_status_container .small_bar_container {
   margin-top: 20px;
@@ -352,19 +362,31 @@
   gap: 20px;
 }
 .survey_other_details .container {
-  width: 40%;
-  padding: 0 12px;
-  border: 1px solid #141414;
+  width: 46%;
+  min-height: 7rem;
+  height: auto;
+  border: 1px solid black;
   border-radius: 21px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  /* box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25); */
+}
+.survey_other_details p {
+  margin: 0;
 }
 .survey_other_details .container .title {
+  color: rgba(72, 72, 72, 1);
+  font-weight: 500;
   font-size: 20px;
 }
 .survey_other_details .container .value {
-  font-size: 26px;
-  font-weight: 700;
-  margin-top: -16px;
+  font-weight: bolder;
+  font-size: 20px;
+  color: rgba(63, 63, 63, 1);
+  text-align: center;
+  margin-top: 8px;
 }
 .required_left_cnt {
   width: fit-content;
@@ -391,4 +413,27 @@
   border-radius: 11px;
   color: white;
   margin-bottom: 1rem;
+}
+
+.right_small_cards {
+  min-height: 120px;
+  width: auto;
+  border: 1px solid lightgray;
+  border-radius: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+.right_small_cards .title {
+  color: rgba(72, 72, 72, 1);
+  font-weight: 500;
+  font-size: 20px;
+}
+.right_small_cards .count {
+  font-weight: 700;
+  font-size: 24px;
+  color: rgba(63, 63, 63, 1);
+  text-align: center;
 }

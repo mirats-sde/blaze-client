@@ -10,6 +10,7 @@ import { GoPrimitiveDot } from "react-icons/go";
 import { green } from "@mui/material/colors";
 import { Snackbar } from "@mui/material";
 import { AiOutlineEdit } from "react-icons/ai";
+import { studyTypesData, surveyTypesData } from "../main-dashboard/data";
 
 const big_bar_status = [
   {
@@ -216,7 +217,7 @@ const ClientDashboard = () => {
                 <div className={styles.cpi}>
                   <div className={styles.dark}>
                     <p>AVG.CPI</p>
-                    <p style={{ fontWeight: 600 }}>
+                    <p>
                       {statDetails?.avgCpi}{" "}
                       {survey?.client_info?.client_cost_currency}
                     </p>
@@ -414,7 +415,7 @@ const ClientDashboard = () => {
               <div className={styles.container}>
                 <p className={styles.title}>CPI</p>
                 <p className={styles.value}>
-                  {survey?.client_info?.client_cost_currency_symbol}{" "}
+                  {survey?.client_info?.client_cost_currency_symbol}
                   {survey?.client_info?.client_cpi}
                 </p>
               </div>
@@ -437,11 +438,19 @@ const ClientDashboard = () => {
               </div>
               <div className={styles.container}>
                 <p className={styles.title}>Study Type</p>
-                <p className={styles.value}>adhoc</p>
+                <p className={styles.value}>
+                  {studyTypesData?.map((type) => {
+                    if (type?.value === survey?.study_type) return type?.label;
+                  })}
+                </p>
               </div>
               <div className={styles.container}>
                 <p className={styles.title}>Survey Type</p>
-                <p className={styles.value}>B2B</p>
+                <p className={styles.value}>
+                  {surveyTypesData?.map((type) => {
+                    if (type?.value === survey?.survey_type) return type?.label;
+                  })}
+                </p>
               </div>
             </div>
 

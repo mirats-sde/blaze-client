@@ -2,14 +2,18 @@ import styles from "./MainDashboard.module.css";
 import PropTypes from "prop-types";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { BiSearch } from "react-icons/bi";
+import "./MainDashboard.css";
 import { v4 as uuid } from "uuid";
 import { Tooltip } from "@mui/material";
 import { useHistory } from "react-router-dom";
 import cx from "classnames";
 import { useMainDashboardContext } from "./MainDashboardContext";
 import { useParams } from "react-router-dom";
-import statusColors from "../client-dashboard/ClientDashboard";
+import getUnicodeFlagIcon from "country-flag-icons/unicode";
+import { useMemo, useState } from "react";
+import { studyTypesData, surveyTypesData } from "./data";
+import countryList from "react-select-country-list";
+import Select from "react-select";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -37,31 +41,79 @@ TabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
+const selectCountryStyle = {
+  menu: (provided, state) => ({
+    ...provided,
+    width: "100%",
+    color: state.selectProps.menuColor,
+    padding: "20px",
+    zIndex: "999",
+  }),
+  control: (styles) => ({
+    ...styles,
+    width: "95%",
+    border: "1px solid #8f8f8f",
+    // boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+    margin: "0.5rem 0.5rem",
+  }),
+  input: (styles) => ({
+    ...styles,
+    height: "2.5rem",
+    width: "95%",
+  }),
+};
 
 const MainDashboard = () => {
   const { surveySortBy, clientID } = useParams();
+  const [filters, setFilters] = useState({});
   const history = useHistory();
   let clientURL = `/clients/${clientID}/`;
 
   const { clientSurveys, teams, client, statusesCnt } =
     useMainDashboardContext();
+  const countries = useMemo(() => countryList().getData(), []);
+
+  const handleFiltersChange = (field, e) => {
+    setFilters((prevData) => {
+      return {
+        ...prevData,
+        [field]: e.target.value,
+      };
+    });
+  };
   return (
     <div className={styles.gmo_research_container}>
       <section className={styles.intro}>
-        <p>Monday, July 4</p>
-        <h1>Good afternoon, {client?.company_name} team!</h1>
+        <p>
+          {new Date().toLocaleString("default", {
+            month: "long",
+            day: "2-digit",
+            year: "numeric",
+          })}
+        </p>
+        <h1>
+          {
+            [
+              "What are you doing that early?",
+              "Good Morning",
+              "Good Afternoon",
+              "Good Evening",
+            ][parseInt((new Date().getHours() / 24) * 4)]
+          }{" "}
+          {client?.company_name} team!
+        </h1>
         <div className={styles.month_filter}>
           <select name="monthfilter" id="">
             <option>This month</option>
           </select>
-          <p>{clientSurveys?.length} projects received</p>
-          <p>{statusesCnt?.live} live projects</p>
+          <p className={styles.project_recevied_txt}>
+            <span className={styles.cnt}>{clientSurveys?.length}</span> projects
+            received
+          </p>
+          <p className={styles.live_projects}>
+            <span className={styles.cnt}>{statusesCnt?.live}</span> live
+            projects
+          </p>
         </div>
       </section>
 
@@ -80,19 +132,41 @@ const MainDashboard = () => {
         <div className={styles.filter_research_container}>
           <div className={styles.survey_filters_cards}>
             <div className={styles.filter_body}>
-              <select name="projmanager" id="">
-                <option value="projmanager">Project Manager</option>
+              <select
+                name="projmanager"
+                value={filters?.pm ? filters?.pm : ""}
+                onChange={(e) => handleFiltersChange("pm", e)}
+              >
+                <option value="">Select Project manager</option>
+                {teams?.project_managers?.map((pm) => {
+                  return (
+                    <option value={pm?.value} key={pm?.value}>
+                      {pm?.label}
+                    </option>
+                  );
+                })}
               </select>
             </div>
             <div className={styles.filter_body}>
               <select name="projmanager" id="">
-                <option value="projmanager">Project Manager</option>
+                <option value="projmanager">select study type</option>
+                {studyTypesData?.map((type) => {
+                  return <option value={type?.value}>{type?.label}</option>;
+                })}
               </select>
             </div>
             <div className={styles.filter_body}>
-              <select name="projmanager" id="">
-                <option value="projmanager">Project Manager</option>
-              </select>
+              <Select
+                styles={selectCountryStyle}
+                options={countries}
+                defaultValue=""
+                value={filters?.country}
+                onChange={(e) => {
+                  setFilters((prevData) => {
+                    return { ...prevData, country: e };
+                  });
+                }}
+              />
             </div>
             <div className={styles.filter_body}>
               <select name="projmanager" id="">
@@ -247,12 +321,7 @@ const MainDashboard = () => {
                       />
                       <div className={styles.coldiv}>
                         <div className={styles.project_name_and_status}>
-                          <Tooltip
-                            title=""
-                            content={
-                              <TooltipForSurveyName name="abcd survey" />
-                            }
-                          >
+                          <Tooltip title={survey?.survey_name} arrow>
                             <label
                               htmlFor="vehicle1"
                               onClick={() =>
@@ -263,17 +332,13 @@ const MainDashboard = () => {
                               {survey?.survey_name}{" "}
                             </label>
                           </Tooltip>
-
                           <span
-                            className={
-                              styles +
-                              "." +
-                              statusColors[
-                                survey?.internal_status
-                                  ? survey?.internal_status
-                                  : survey?.status
-                              ]
-                            }
+                            className={cx(
+                              survey?.internal_status
+                                ? survey?.internal_status.replace(" ", "")
+                                : survey?.status,
+                              "survey_status"
+                            )}
                           >
                             {survey?.internal_status?.length
                               ? survey?.internal_status
@@ -281,10 +346,12 @@ const MainDashboard = () => {
                           </span>
                         </div>
 
-                        <br />
                         <div className={styles.project_id_and_internal_status}>
                           <span>
                             #{survey?.project_id} / {survey?.survey_id}
+                          </span>
+                          <span className={styles.country_flag}>
+                            {getUnicodeFlagIcon(survey?.country?.country)}
                           </span>
                         </div>
                       </div>
@@ -296,7 +363,7 @@ const MainDashboard = () => {
                         {survey?.completes}/{survey?.no_of_completes}
                       </span>
                       <br />
-                      <span>completes</span>
+                      <span className={styles.tableSubvalue}>completes</span>
                     </td>
                     {/* <td>{project.completes}</td> */}
                     <td>
@@ -305,18 +372,20 @@ const MainDashboard = () => {
                         {survey?.avg_cpi}
                       </span>
                       <br />
-                      <span>{survey?.client_info?.client_cost_currency}</span>
+                      <span className={styles.tableSubvalue}>
+                        {survey?.client_info?.client_cost_currency}
+                      </span>
                     </td>
                     <td>
                       {/* {project.IR} */}
                       <span className={styles.tableValue}>{survey?.ir}%</span>
                       <br />
-                      <span>in-field</span>
+                      <span className={styles.tableSubvalue}>in-field</span>
                     </td>
                     <td>
                       <span className={styles.tableValue}>{survey?.loi}</span>
                       <br />
-                      <span>mins</span>
+                      <span className={styles.tableSubvalue}>mins</span>
                     </td>
                     <td>
                       <span
@@ -334,28 +403,34 @@ const MainDashboard = () => {
                             return pm?.label;
                           }
                         })}
-                        {/* {survey?.mirats_insights_team?.project_managers[0]} */}
                       </span>
                     </td>
                     <td>
                       {/* {project.EPC} */}
                       <span className={styles.tableValue}>{survey?.epc}</span>
                       <br />
-                      <span> USD</span>
+                      <span className={styles.tableSubvalue}> USD</span>
                     </td>
                     <td>
                       <br />
-                      <p className={styles.study_type}>{survey?.study_type}</p>
-                      <p className={styles.survey_type}>
+                      <span
+                        className={cx(styles.tableValue, styles.study_type)}
+                      >
+                        {survey?.study_type}
+                      </span>
+                      <br />
+                      <span
+                        className={cx(styles.tableSubvalue, styles.survey_type)}
+                      >
                         {survey?.survey_type}
-                      </p>
+                      </span>
                     </td>
                     <td>
                       <span className={styles.tableValue}>
                         {survey?.creation_date.toDate()?.toDateString()}
                       </span>
                       <br />
-                      <span>
+                      <span className={styles.tableSubvalue}>
                         {(
                           (new Date().getTime() -
                             survey?.creation_date.toDate()?.getTime()) /
