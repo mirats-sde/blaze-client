@@ -3,13 +3,14 @@ import { NavLink, useParams } from "react-router-dom";
 import styles from "./Header.module.css";
 import logo from "../../assets/images/mirats_console_logo.png";
 const Header = () => {
-  const { surveyID } = useParams();
+  const { clientID, surveyID } = useParams();
   const checkActive = (match, location) => {
     //some additional logic to verify you are in the home URI
     if (!location) return false;
     const { pathname } = location;
     return pathname === "/";
   };
+  let navigationURL = `/${clientID}/a8e91843f173d7c5a5bd11b72ab43fd3`;
   return (
     <>
       <div className={styles.header}>
@@ -17,27 +18,27 @@ const Header = () => {
         <div className={styles.navigation_options}>
           <NavLink
             activeClassName={styles.activ_header_link}
-            to={`/dashboard/${surveyID}`}
+            to={`${navigationURL}/dashboard/${surveyID}`}
             className={styles.header_link}
           >
             Dashboard
           </NavLink>
           <NavLink
             activeClassName={styles.activ_header_link}
-            to={`/qualifications/${surveyID}`}
+            to={`${navigationURL}/qualifications/${surveyID}`}
             className={styles.header_link}
           >
             Qualifications
           </NavLink>
           <NavLink
-            to={`/analytics/audience/${surveyID}`}
+            to={`${navigationURL}/analytics/audience/${surveyID}`}
             activeClassName={styles.activ_header_link}
             className={styles.header_link}
           >
             Analytics
           </NavLink>
           <NavLink
-            to={`/reports/${surveyID}`}
+            to={`${navigationURL}/reports/${surveyID}`}
             activeClassName={styles.activ_header_link}
             className={styles.header_link}
           >
@@ -45,14 +46,14 @@ const Header = () => {
           </NavLink>
 
           <NavLink
-            to={`/documents/${surveyID}`}
+            to={`${navigationURL}/documents/${surveyID}`}
             activeClassName={styles.activ_header_link}
             className={styles.header_link}
           >
             Documents
           </NavLink>
           <NavLink
-            to={`/security/${surveyID}`}
+            to={`${navigationURL}/security/${surveyID}`}
             activeClassName={styles.activ_header_link}
             className={styles.header_link}
           >

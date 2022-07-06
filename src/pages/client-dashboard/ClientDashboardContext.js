@@ -8,6 +8,8 @@ import {
   getErrorCodesForMiratsStatus,
   getMiratsInsightsTeam,
 } from "../../firebaseQueries";
+import { decryptText } from "../../utils/enc-dec.utils";
+import { useHistory } from "react-router-dom";
 const ClientDashbaordContext = createContext();
 
 export const useClientDashboardContext = () => {
@@ -15,13 +17,14 @@ export const useClientDashboardContext = () => {
 };
 
 const ClientDashboardContextProvider = ({ children }) => {
-  const { surveyID } = useParams();
+  const { clientID, surveyID } = useParams();
   const [survey, setSurvey] = useState({});
   const [logs, setLogs] = useState({});
   const [statDetails, setStatDetails] = useState({});
   const [teams, setTeams] = useState({});
   const [codes, setCodes] = useState({});
   const [batti, setBatti] = useState(0);
+  const history = useHistory();
 
   const getAvgCpi = (completedSessionsData) => {
     let sum = 0;
@@ -33,7 +36,6 @@ const ClientDashboardContextProvider = ({ children }) => {
   };
 
   const handleActiveLight = (mainStatus, internalStatus) => {
-    console.log("Active light function");
     if (mainStatus?.toLowerCase() === "bidding") {
       setBatti(1);
     } else if (mainStatus?.toLowerCase() === "awarded") {
@@ -84,9 +86,14 @@ const ClientDashboardContextProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    const decryptedClientID = decryptText(clientID);
     onSnapshot(
       doc(db, "miratsinsights", "blaze", "surveys", String(surveyID)),
       (res) => {
+        if (res.data()?.client_info?.client_id !== decryptedClientID) {
+          history.push(`/${clientID}/a8e91843f173d7c5a5bd11b72ab43fd3/all`);
+          return;
+        }
         let sum = 0;
         res.data()?.qualifications?.questions?.forEach((que) => {
           if (que?.conditions.hasOwnProperty("quotas")) {
@@ -179,7 +186,7 @@ const ClientDashboardContextProvider = ({ children }) => {
         };
       });
     });
-  }, [surveyID]);
+  }, [surveyID, clientID]);
 
   const value = { survey, statDetails, teams, batti, logs, codes };
   return (

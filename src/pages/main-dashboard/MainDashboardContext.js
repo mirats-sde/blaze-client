@@ -8,6 +8,7 @@ import {
   getClient,
   getMiratsInsightsTeam,
 } from "../../firebaseQueries";
+import { decryptText } from "../../utils/enc-dec.utils";
 
 const MainDashboardContext = createContext();
 
@@ -29,6 +30,7 @@ const MainDashboardContextProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    let decryptedClientID = decryptText(clientID);
     getAllSurveys().then((res) => {
       res.forEach(async (survey) => {
         let surveyData = survey.data();
@@ -38,7 +40,7 @@ const MainDashboardContextProvider = ({ children }) => {
         let cpiSum = 0,
           surveyTimeSum = 0;
 
-        if (surveyData?.client_info?.client_id === clientID) {
+        if (surveyData?.client_info?.client_id === decryptedClientID) {
           setStatusCnt((prevData) => {
             return {
               ...prevData,
@@ -78,7 +80,7 @@ const MainDashboardContextProvider = ({ children }) => {
       });
     });
 
-    getClient(clientID).then((res) => {
+    getClient(decryptedClientID).then((res) => {
       setClient(res.data());
     });
   }, [clientID]);
@@ -96,7 +98,14 @@ const MainDashboardContextProvider = ({ children }) => {
     if (surveySortBy === "all") setClientSurveys(clientSurveysCopy);
   }, [surveySortBy]);
 
-  const value = { clientSurveys, teams, client, statusesCnt };
+  const value = {
+    clientSurveys,
+    setClientSurveys,
+    clientSurveysCopy,
+    teams,
+    client,
+    statusesCnt,
+  };
   return (
     <MainDashboardContext.Provider value={value}>
       {children}

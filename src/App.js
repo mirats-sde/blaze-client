@@ -15,6 +15,9 @@ import MainDashboard from "./pages/main-dashboard/MainDashboard";
 import MainDashboardContextProvider from "./pages/main-dashboard/MainDashboardContext";
 import Home from "./pages/home/Home";
 
+// IMP NOTE
+//------>>>>> a8e91843f173d7c5a5bd11b72ab43fd3  encryption of "miratsinsights" with md2 algorithm
+
 function App() {
   return (
     <>
@@ -22,42 +25,50 @@ function App() {
         <Route path="/" exact>
           <Home />
         </Route>
-        <Route path="/dashboard/:surveyID">
+        <Route path="/:clientID/a8e91843f173d7c5a5bd11b72ab43fd3/dashboard/:surveyID">
           <ClientDashboardContextProvider>
             <ClientDashboard />
           </ClientDashboardContextProvider>
         </Route>
 
-        <Route path="/qualifications/:surveyID">
+        <Route path="/:clientID/a8e91843f173d7c5a5bd11b72ab43fd3/qualifications/:surveyID">
           <QualificationsContextProvider>
             <Qualifications />
           </QualificationsContextProvider>
         </Route>
 
-        <Route path="/analytics/:navigationTab/:surveyID">
+        <Route path="/:clientID/a8e91843f173d7c5a5bd11b72ab43fd3/analytics/:navigationTab/:surveyID">
           <AnalyticsContextProvider>
             <Analytics />
           </AnalyticsContextProvider>
         </Route>
 
-        <Route path="/reports/:surveyID">
+        <Route path="/:clientID/a8e91843f173d7c5a5bd11b72ab43fd3/reports/:surveyID">
           <ReportsContextProvider>
             <Reports />
           </ReportsContextProvider>
         </Route>
 
-        <Route path="/documents/:surveyID">
+        <Route path="/:clientID/a8e91843f173d7c5a5bd11b72ab43fd3/documents/:surveyID">
           <DocumentsContextProvider>
             <Documents />
           </DocumentsContextProvider>
         </Route>
-        <Route path="/security/:surveyID">
+        <Route path="/:clientID/a8e91843f173d7c5a5bd11b72ab43fd3/security/:surveyID">
           <SecuirtyContextProvider>
             <Security />
           </SecuirtyContextProvider>
         </Route>
 
-        <Route path="/clients/:clientID/:surveySortBy" exact>
+        <Route path="/:clientID/a8e91843f173d7c5a5bd11b72ab43fd3" exact>
+          <MainDashboardContextProvider>
+            <MainDashboard />
+          </MainDashboardContextProvider>
+        </Route>
+        <Route
+          path="/:clientID/a8e91843f173d7c5a5bd11b72ab43fd3/:surveySortBy"
+          exact
+        >
           <MainDashboardContextProvider>
             <MainDashboard />
           </MainDashboardContextProvider>

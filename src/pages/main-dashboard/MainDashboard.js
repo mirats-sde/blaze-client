@@ -10,10 +10,11 @@ import cx from "classnames";
 import { useMainDashboardContext } from "./MainDashboardContext";
 import { useParams } from "react-router-dom";
 import getUnicodeFlagIcon from "country-flag-icons/unicode";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { studyTypesData, surveyTypesData } from "./data";
 import countryList from "react-select-country-list";
 import Select from "react-select";
+import _ from "lodash";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -67,20 +68,99 @@ const MainDashboard = () => {
   const { surveySortBy, clientID } = useParams();
   const [filters, setFilters] = useState({});
   const history = useHistory();
-  let clientURL = `/clients/${clientID}/`;
+  let clientURL = `/${clientID}/a8e91843f173d7c5a5bd11b72ab43fd3/`;
 
-  const { clientSurveys, teams, client, statusesCnt } =
-    useMainDashboardContext();
+  const {
+    clientSurveys,
+    setClientSurveys,
+    clientSurveysCopy,
+    teams,
+    client,
+    statusesCnt,
+  } = useMainDashboardContext();
   const countries = useMemo(() => countryList().getData(), []);
 
-  const handleFiltersChange = (field, e) => {
+  const handleFiltersChange = (e) => {
     setFilters((prevData) => {
       return {
         ...prevData,
-        [field]: e.target.value,
+        [e.target.name]: e.target.value,
       };
     });
   };
+
+  useEffect(() => {
+    if (surveySortBy === undefined) {
+      history.push(`/${clientID}/a8e91843f173d7c5a5bd11b72ab43fd3/all`);
+    }
+  }, [surveySortBy]);
+
+  useEffect(() => {
+    let allClientSurveys = clientSurveysCopy;
+    Object.keys(filters).map((key) => {
+      switch (key) {
+        case "pm":
+          allClientSurveys = _.filter(allClientSurveys, (survey) => {
+            return survey?.mirats_insights_team.project_managers.includes(
+              filters[key]
+            );
+          });
+          break;
+        case "study_type":
+          allClientSurveys = _.filter(allClientSurveys, (survey) => {
+            return survey?.study_type === filters[key];
+          });
+          break;
+        case "country":
+          allClientSurveys = _.filter(allClientSurveys, (survey) => {
+            return survey?.country?.country === filters[key].value;
+          });
+        case "survey_type":
+          allClientSurveys = _.filter(allClientSurveys, (survey) => {
+            return survey?.survey_type === filters[key];
+          });
+          break;
+        case "client_pm":
+          allClientSurveys = _.filter(allClientSurveys, (survey) => {
+            return survey?.clients_team?.project_managers.includes(
+              filters[key]
+            );
+          });
+          break;
+        case "period":
+          switch (filters[key]) {
+            case "this-month":
+              allClientSurveys = _.filter(allClientSurveys, (survey) => {
+                return (
+                  survey?.creation_date?.toDate().getMonth() ===
+                    new Date().getMonth() &&
+                  survey?.creation_date?.toDate().getYear() ===
+                    new Date().getYear()
+                );
+              });
+              break;
+            case "prev-month":
+              let prevMonth = new Date(
+                new Date().setMonth(new Date().getMonth() - 1)
+              ).getMonth();
+              let prevYear = new Date(
+                new Date().setFullYear(new Date().getFullYear())
+              ).getFullYear();
+
+              allClientSurveys = _.filter(allClientSurveys, (survey) => {
+                return (
+                  survey?.creation_date?.toDate().getMonth() === prevMonth &&
+                  survey?.creation_date?.toDate().getYear() === prevYear
+                );
+              });
+          }
+        default:
+          break;
+      }
+    });
+    setClientSurveys(allClientSurveys);
+  }, [filters]);
+
   return (
     <div className={styles.gmo_research_container}>
       <section className={styles.intro}>
@@ -111,8 +191,10 @@ const MainDashboard = () => {
             received
           </p>
           <p className={styles.live_projects}>
-            <span className={styles.cnt}>{statusesCnt?.live}</span> live
-            projects
+            <span className={styles.cnt}>
+              {statusesCnt?.live ? statusesCnt?.live : 0}
+            </span>{" "}
+            live projects
           </p>
         </div>
       </section>
@@ -133,11 +215,13 @@ const MainDashboard = () => {
           <div className={styles.survey_filters_cards}>
             <div className={styles.filter_body}>
               <select
-                name="projmanager"
+                name="pm"
                 value={filters?.pm ? filters?.pm : ""}
-                onChange={(e) => handleFiltersChange("pm", e)}
+                onChange={handleFiltersChange}
               >
-                <option value="">Select Project manager</option>
+                <option value="" hidden>
+                  Select Project manager
+                </option>
                 {teams?.project_managers?.map((pm) => {
                   return (
                     <option value={pm?.value} key={pm?.value}>
@@ -148,8 +232,14 @@ const MainDashboard = () => {
               </select>
             </div>
             <div className={styles.filter_body}>
-              <select name="projmanager" id="">
-                <option value="projmanager">select study type</option>
+              <select
+                name="study_type"
+                value={filters?.study_type ? filters?.study_type : ""}
+                onChange={handleFiltersChange}
+              >
+                <option value="" hidden>
+                  select study type
+                </option>
                 {studyTypesData?.map((type) => {
                   return <option value={type?.value}>{type?.label}</option>;
                 })}
@@ -157,30 +247,59 @@ const MainDashboard = () => {
             </div>
             <div className={styles.filter_body}>
               <Select
+                name="country"
                 styles={selectCountryStyle}
                 options={countries}
-                defaultValue=""
-                value={filters?.country}
+                value={filters?.country ? filters?.country : ""}
                 onChange={(e) => {
                   setFilters((prevData) => {
-                    return { ...prevData, country: e };
+                    return {
+                      ...prevData,
+                      country: e,
+                    };
                   });
                 }}
               />
             </div>
             <div className={styles.filter_body}>
-              <select name="projmanager" id="">
-                <option value="projmanager">Project Manager</option>
+              <select
+                name="survey_type"
+                value={filters?.survey_type ? filters?.survey_type : ""}
+                onChange={handleFiltersChange}
+              >
+                <option value="" hidden>
+                  Select survey type
+                </option>
+                {surveyTypesData?.map((type) => {
+                  return <option value={type?.value}>{type?.label}</option>;
+                })}
               </select>
             </div>
             <div className={styles.filter_body}>
-              <select name="projmanager" id="">
-                <option value="projmanager">Project Manager</option>
+              <select
+                name="client_pm"
+                value={filters?.client_pm ? filters?.client_pm : ""}
+                onChange={handleFiltersChange}
+              >
+                <option value="" hidden>
+                  Select Client's project Manager
+                </option>
+                {client?.project_managers?.map((pm) => {
+                  return <option value={pm?.name}>{pm?.name}</option>;
+                })}
               </select>
             </div>
             <div className={styles.filter_body}>
-              <select name="projmanager" id="">
-                <option value="projmanager">Project Manager</option>
+              <select
+                name="month"
+                value={filters?.month ? filters?.month : ""}
+                onChange={handleFiltersChange}
+              >
+                <option value="" hidden>
+                  Select period
+                </option>
+                <option value="this-month">This Month</option>
+                <option value="prev-month">Previous Month</option>
               </select>
             </div>
           </div>
@@ -311,7 +430,15 @@ const MainDashboard = () => {
             <tbody>
               {clientSurveys?.map((survey) => {
                 return (
-                  <tr key={uuid()} className={styles.dataRow}>
+                  <tr
+                    key={uuid()}
+                    className={styles.dataRow}
+                    onClick={() =>
+                      history.push(
+                        `/${clientID}/a8e91843f173d7c5a5bd11b72ab43fd3/dashboard/${survey?.survey_id}`
+                      )
+                    }
+                  >
                     <td className={styles.project_table_first_col}>
                       <input
                         type="checkbox"
@@ -325,7 +452,9 @@ const MainDashboard = () => {
                             <label
                               htmlFor="vehicle1"
                               onClick={() =>
-                                history.push(`/dashboard/${survey?.survey_id}`)
+                                history.push(
+                                  `/${clientID}/a8e91843f173d7c5a5bd11b72ab43fd3/dashboard/${survey?.survey_id}`
+                                )
                               }
                               className={styles.project_name}
                             >
